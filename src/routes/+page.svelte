@@ -17,10 +17,10 @@
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-10 text-center flex flex-col items-center">
+	<div class="space-y-3 text-center flex flex-col items-center">
 		<h2 class="h2">Welcome to Camp Coach.</h2>
 		<p>Book today for {humanDate(data.sixMonthsDate)}!</p>
-		<p>Important Upcoming Booking Dates:</p>
+		<p>Your Camping Calendar:</p>
 		<div>
 			<!-- Responsive Container (recommended) -->
 			<div class="table-container">
@@ -29,7 +29,7 @@
 					<thead>
 						<tr>
 							<th>Book Date</th>
-							<th>Event</th>
+							<th>Event Type</th>
 							<th>Arrive</th>
 							<th>Depart</th>
 						</tr>
@@ -47,16 +47,28 @@
 				</table>
 			</div>
 		</div>
-		<h2>Additional Booking Recommendations</h2>
-		<RangeSlider name="range-slider" bind:value={selectedGapInWeeks} max={8} step={1}>
-			Recommender Gaps Between Trips
+		<h2>More Recommendations</h2>
+		<RangeSlider name="range-slider" bind:value={selectedGapInWeeks} max={6} min={1} step={1}>
+			Weeks Between Trips: {selectedGapInWeeks}
 		</RangeSlider>
-		{#each suggestedBookings as suggestion}
-			<div>
-				<p>Arrive: {humanDate(suggestion.arrive)}</p>
-				<p>Depart: {humanDate(suggestion.depart)}</p>
-				<button on:click={() => handleSuggestionAddClick(suggestion)}>Add</button>
+		{#if suggestedBookings.length > 0}
+			<div class="flex flex-col">
+				{#each suggestedBookings as suggestion}
+					<div class="flex justify-between py-2">
+						<div class="text-left pr-4">
+							<p>Arrive: {humanDate(suggestion.arrive)}</p>
+							<p>Depart: {humanDate(suggestion.depart)}</p>
+						</div>
+						<button
+							on:click={() => handleSuggestionAddClick(suggestion)}
+							type="button"
+							class="btn variant-filled btn-sm">Add To Calendar</button
+						>
+					</div>
+				{/each}
 			</div>
-		{/each}
+		{:else}
+			<p>No recommendations remaining.</p>
+		{/if}
 	</div>
 </div>
