@@ -1,7 +1,5 @@
 {
-	"prettier.documentSelectors": [
-		"**/*.svelte"
-	],
+	"prettier.documentSelectors": ["**/*.svelte"],
 	"tailwindCSS.classAttributes": [
 		"class",
 		"accent",
@@ -113,5 +111,9 @@
 		"track",
 		"width",
 		"zIndex"
-	]
+	],
+	"[svelte]": {
+		"editor.defaultFormatter": "vscode.typescript-language-features"
+	},
+	"editor.defaultFormatter": null
 }
