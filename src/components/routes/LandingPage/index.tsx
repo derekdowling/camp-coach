@@ -24,13 +24,10 @@ export const LandingPage: FC = () => {
           </Title>
           <List spacing="md" size="xl" maw="80%">
             <List.Item>
-              <b>Build A Plan</b> – Built-in recommendations will help you
-              create a camping calendar that is right for you.
+              <b>Planning Simplified</b> – Our built-in scheduling recommendations makes building your camping plan a breeze.
             </List.Item>
             <List.Item>
-              <b>Get First Pick</b> – Never miss out on the best sites again
-              with built-in booking notification reminders based on your camping
-              plan.
+              <b>Always Get First Pick</b> – Load booking reminders and camping trips into your favorite calendar software. 
             </List.Item>
           </List>
           <Button

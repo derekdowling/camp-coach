@@ -1,9 +1,8 @@
 import { humanDateLong } from "../date-utils";
 import { compareAsc, isAfter, isBefore } from "date-fns";
 
-export type BaseEvent = { name: string; date: string | Date };
-
-export type PlannedEvent = Pick<BaseEvent, "name"> & {
+export type PlannedEvent = {
+  name: string;
   arrive: Date;
   depart: Date;
   book: Date;

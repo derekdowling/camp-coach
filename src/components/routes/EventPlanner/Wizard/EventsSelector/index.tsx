@@ -23,7 +23,7 @@ export const EventsSelector: FC<EventSelectorProps> = ({
           onChange(event, !removed);
         }}
       >
-        {event.name}
+        {event.name.split('Camping Trip')[0]}
       </Chip>
     );
   });

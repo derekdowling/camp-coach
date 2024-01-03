@@ -3,63 +3,14 @@ import {
   nextFriday,
   isFriday,
   nextSunday,
-  isMonday,
-  previousFriday,
   isSaturday,
-  addDays,
-  isThursday,
-  isSunday,
   isBefore,
   subWeeks,
   differenceInCalendarWeeks,
 } from "date-fns";
-import { BaseEvent, PlannedEvent, PlannedEvents } from "../event-utils";
+import { PlannedEvent, PlannedEvents } from "../event-utils";
 import { createUuid } from "../uuid";
 import { sixMonthsOutBookDateTime } from "../date-utils";
-
-export function getArriveDepartSuggestionForDate(date: Date): {
-  arrive: Date;
-  depart: Date;
-} {
-  // If close to end of weekend, suggest the event fall on the depart date
-  if (isSunday(date) || isMonday(date)) {
-    return {
-      arrive: previousFriday(date),
-      depart: date,
-    };
-  }
-
-  // If close to start of weekend, make it a long weekend
-  if (isThursday(date) || isFriday(date) || isSaturday(date)) {
-    return {
-      arrive: date,
-      depart: nextSunday(date),
-    };
-  }
-
-  // If its Tues/Weds, suggest just an overnight trip
-  return {
-    arrive: date,
-    depart: addDays(date, 1),
-  };
-}
-
-export function getEventSuggestionForDate({
-  name,
-  date,
-}: BaseEvent): PlannedEvent {
-  const eventDate =
-    typeof date === "string" ? new Date(date + "T00:00:00") : date;
-  const { arrive, depart } = getArriveDepartSuggestionForDate(eventDate);
-
-  return {
-    name,
-    arrive,
-    depart,
-    book: sixMonthsOutBookDateTime(arrive),
-    id: createUuid(),
-  };
-}
 
 /**
  * For a date range, return a list of events based on desired density.
@@ -101,13 +52,15 @@ export function getEventFillForDateRange({
       ? dateIterator
       : nextFriday(dateIterator);
 
-    const event = getEventSuggestionForDate({
+    const newEvent: PlannedEvent = {
       name: "Camping Trip",
-      date: upcomingFriday,
-    });
-    events.push(event);
-
-    dateIterator = addWeeks(event.arrive, minFillGapWeeks);
+      arrive: upcomingFriday,
+      depart: nextSunday(upcomingFriday),
+      book: sixMonthsOutBookDateTime(upcomingFriday),
+      id: createUuid(),
+    };
+    events.push(newEvent);
+    dateIterator = addWeeks(newEvent.arrive, minFillGapWeeks);
   }
   return events;
 }

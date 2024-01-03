@@ -1,6 +1,59 @@
+import { addDays } from "date-fns";
 import { createUuid, humanDateLong } from "..";
-import { PlannedEvents } from "../event-utils";
+import { PlannedEvent, PlannedEvents } from "../event-utils";
 import ICAL from "ical.js";
+
+function createBookingReminderComponent(event: PlannedEvent): ICAL.Component {
+  const eventComponent = new ICAL.Component("vevent");
+  const calEvent = new ICAL.Event(eventComponent);
+
+  eventComponent.addPropertyWithValue("created", ICAL.Time.now());
+  eventComponent.addPropertyWithValue("dtstamp", ICAL.Time.now());
+
+  calEvent.uid = `${event.id}-booking`;
+  calEvent.summary = `Book campsite(s) for ${event.name}`;
+  calEvent.description = `
+    Trip Name: ${event.name}
+    Trip Start: ${humanDateLong(event.arrive)}
+    Trip End: ${humanDateLong(event.depart)}
+    `;
+
+  calEvent.startDate = ICAL.Time.fromJSDate(event.book, false);
+  calEvent.endDate = ICAL.Time.fromJSDate(event.book, false);
+
+  // 15 minutes prior to start time
+  const justBeforeAlarm = createAlarm("-PT15M");
+  eventComponent.addSubcomponent(justBeforeAlarm);
+
+  // 1 day prior to start time
+  const dayBeforeAlarm = createAlarm("-P1D");
+  eventComponent.addSubcomponent(dayBeforeAlarm);
+
+  return eventComponent;
+}
+
+function createEventComponent(event: PlannedEvent): ICAL.Component {
+  const eventComponent = new ICAL.Component("vevent");
+  const calEvent = new ICAL.Event(eventComponent);
+
+  eventComponent.addPropertyWithValue("created", ICAL.Time.now());
+  eventComponent.addPropertyWithValue("dtstamp", ICAL.Time.now());
+
+  calEvent.uid = event.id;
+  calEvent.summary = event.name;
+  calEvent.description = "";
+
+  // We want all day events, date times need to start at 00:00 day of arrival
+  // and end at 12:00am the day after departing
+  calEvent.startDate = ICAL.Time.fromJSDate(event.arrive, false);
+  calEvent.endDate = ICAL.Time.fromJSDate(addDays(event.depart, 1), false);
+
+  // 1 day prior to start time
+  const dayBeforeAlarm = createAlarm("-P1D");
+  eventComponent.addSubcomponent(dayBeforeAlarm);
+
+  return eventComponent;
+}
 
 export function createICALContentStr(
   calendarName: string,
@@ -16,32 +69,8 @@ export function createICALContentStr(
   root.addPropertyWithValue("X-WR-CALNAME", calendarName);
 
   events.forEach((event) => {
-    const eventComponent = new ICAL.Component("vevent");
-    const calEvent = new ICAL.Event(eventComponent);
-
-    eventComponent.addPropertyWithValue("created", ICAL.Time.now());
-    eventComponent.addPropertyWithValue("dtstamp", ICAL.Time.now());
-
-    calEvent.uid = event.id;
-    calEvent.summary = `Book campsite(s) for ${event.name}`;
-    calEvent.description = `
-    Trip Name: ${event.name}
-    Trip Start: ${humanDateLong(event.arrive)}
-    Trip End: ${humanDateLong(event.depart)}
-    `;
-
-    calEvent.startDate = ICAL.Time.fromJSDate(event.book, false);
-    calEvent.endDate = ICAL.Time.fromJSDate(event.book, false);
-
-    // 15 minutes prior to start time
-    const justBeforeAlarm = createAlarm("-PT15M");
-    eventComponent.addSubcomponent(justBeforeAlarm);
-
-    // 1 day prior to start time
-    const dayBeforeAlarm = createAlarm("-P1D");
-    eventComponent.addSubcomponent(dayBeforeAlarm);
-
-    root.addSubcomponent(eventComponent);
+    root.addSubcomponent(createBookingReminderComponent(event));
+    root.addSubcomponent(createEventComponent(event));
   });
 
   return root.toString();
