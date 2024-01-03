@@ -27,7 +27,7 @@ export const LandingPage: FC = () => {
               <b>Planning Simplified</b> – Our built-in scheduling recommendations makes building your camping plan a breeze.
             </List.Item>
             <List.Item>
-              <b>Always Get First Pick</b> – Load booking reminders and camping trips into your favorite calendar software. 
+              <b>Always Get First Pick</b> – Setup reminders in your calendar app with one click so you never forget when to book.
             </List.Item>
           </List>
           <Button
