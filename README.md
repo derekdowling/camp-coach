@@ -1,5 +1,7 @@
 # Camp Coach
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1d06be2d-758d-4b29-b57f-8bb1a1eb5ecf/deploy-status)](https://app.netlify.com/sites/camp-coach/deploys)
+
 ## TODOs
 
 - Run validation to make sure there are no overlapping dates

@@ -74,7 +74,7 @@ export const EventSuggester: FC<EventSuggesterProps> = ({
       />
       <ScrollArea type="hover" scrollbars="y">
         <Stack gap={6}>
-          {/* {suggestions.length > 0 ? suggestions : <p>No suggestions.</p>} */}
+          {suggestions.length > 0 ? suggestions : <p>No suggestions.</p>}
         </Stack>
       </ScrollArea>
     </Stack>
